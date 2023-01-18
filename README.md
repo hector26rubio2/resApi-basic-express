@@ -1,3 +1,3 @@
 # WebServer + RestServer
 
-Arquitectura basica un apiRest con express
+Arquitectura basica de un apiRest con express
