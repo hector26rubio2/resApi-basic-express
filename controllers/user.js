@@ -1,6 +1,6 @@
 const { response, request } = require("express");
 const bcryptjs = require("bcryptjs");
-const Usuario = require("../models/usuario");
+const User = require("../models/usuario");
 /*  TO COMPLETE pagination
  *  completar la paginacion
  *  */
@@ -8,8 +8,8 @@ const getUsers = async (req = request, res = response) => {
   const { limit = 5, from = 0 } = req.query;
   const query = { state: true };
   const [total, users] = await Promise.all([
-    Usuario.countDocuments(query),
-    Usuario.find(query).skip(Number(from)).limit(Number(limit)),
+    User.countDocuments(query),
+    User.find(query).skip(Number(from)).limit(Number(limit)),
   ]);
   res.json({
     total,
@@ -19,16 +19,16 @@ const getUsers = async (req = request, res = response) => {
 
 const postUser = async (req = request, res = response) => {
   const { name, email, password, rol } = req.body;
-  const usuario = new Usuario({ name, email, password, rol });
+  const User = new User({ name, email, password, rol });
 
   // * encriptar la contraseña
   const salt = bcryptjs.genSaltSync();
-  usuario.password = bcryptjs.hashSync(password, salt);
+  User.password = bcryptjs.hashSync(password, salt);
   // * guardar en db
-  await usuario.save();
+  await User.save();
   // * response
   res.json({
-    usuario,
+    User,
   });
 };
 
@@ -41,7 +41,7 @@ const putUser = async (req = request, res = response) => {
     data.password = bcryptjs.hashSync(password, salt);
   }
 
-  const user = await Usuario.findByIdAndUpdate(id, data);
+  const user = await User.findByIdAndUpdate(id, data);
   res.json({
     user,
   });
@@ -52,10 +52,10 @@ const deleteUser = async (req = request, res = response) => {
 
   /**
    * ?  fisicamente  borrar de la base datos
-   *   const user = await Usuario.findByIdAndDelete(id);
+   *   const user = await User.findByIdAndDelete(id);
    */
-  // ? quitar acceso(borrado para uso) pero manteniendo registro 
-  const user = await Usuario.findByIdAndUpdate(id, { state: false });
+  // ? quitar acceso(borrado para uso) pero manteniendo registro
+  const user = await User.findByIdAndUpdate(id, { state: false });
 
   res.json({
     user,
